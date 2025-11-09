@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up environment
+        run: |
+          echo "Usar este bloco para instalar dependências se necessário"
+          # ex: sudo apt-get update && sudo apt-get install -y make
+
+      - name: Run tests (make test || ./run-tests.sh || exit 0)
+        run: |
+          if [ -f Makefile ]; then
+            make test
+          elif [ -x ./run-tests.sh ]; then
+            ./run-tests.sh
+          elif command -v pytest >/dev/null 2>&1; then
+            pytest -q
+          else
+            echo "Nenhum comando de teste detectado — adicione 'make test' ou './run-tests.sh'"
+            exit 1
+          fi
